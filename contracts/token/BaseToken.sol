@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.28;
+pragma solidity 0.8.28;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract BaseToken is ERC20Burnable, Pausable, Ownable {
+contract BaseToken is ERC20Burnable, Pausable, Ownable2Step {
     using SafeERC20 for IERC20;
     
     event WithdrawToken(address indexed caller, address indexed indexToken, address indexed recipient, uint256 amount);
@@ -56,10 +56,16 @@ contract BaseToken is ERC20Burnable, Pausable, Ownable {
         emit WithdrawToken(msg.sender, _token, _account, _amount);
     }
 
+    /**
+    * @dev Allow owner pause in case of emergency.
+    */
     function pause() external onlyOwner {
         _pause();
     }
 
+    /**
+    * @dev Allow owner unpause when paused.
+    */
     function unpause() external onlyOwner {
         _unpause();
     }
